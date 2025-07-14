@@ -84,8 +84,8 @@
         // Definición de las asignaturas con sus IDs, nombres, semestres y prerrequisitos.
         const courses = [
             // Semestre 1
-            { id: 'intro_servicios', name: 'Introducción a los Servicios', semester: 1, prereqs: [] },
             { id: 'intro_admin', name: 'Introducción a la Administración', semester: 1, prereqs: [] },
+            { id: 'intro_servicios', name: 'Introducción a los Servicios', semester: 1, prereqs: [] },
             { id: 'contabilidad', name: 'Contabilidad', semester: 1, prereqs: [] },
             { id: 'algebra', name: 'Álgebra', semester: 1, prereqs: [] },
             { id: 'taller_equipo_1', name: 'Taller de Trabajo en Equipo I', semester: 1, prereqs: [] },
@@ -94,64 +94,66 @@
 
             // Semestre 2
             { id: 'gestion_servicios', name: 'Gestión de Servicios', semester: 2, prereqs: ['intro_servicios'] },
-            { id: 'contabilidad_costos', name: 'Contabilidad de Costos', semester: 2, prereqs: ['contabilidad'] },
-            { id: 'ingles_1', name: 'Inglés', semester: 2, prereqs: [] },
+            { id: 'salud_ocupacional', name: 'Salud Ocupacional', semester: 2, prereqs: ['intro_admin'] },
+            { id: 'ingles_1', name: 'Inglés I', semester: 2, prereqs: [] },
             { id: 'taller_herramientas', name: 'Taller de Herramientas Informáticas', semester: 2, prereqs: [] },
-            { id: 'teologia_1', name: 'Teología I', semester: 2, prereqs: [] },
+            { id: 'calculo', name: 'Cálculo', semester: 2, prereqs: ['algebra'] },
+            { id: 'contabilidad_costos', name: 'Contabilidad de Costos', semester: 2, prereqs: ['contabilidad'] },
+            { id: 'teologia_1', name: 'Teología', semester: 2, prereqs: [] },
 
             // Semestre 3
-            { id: 'economia_1', name: 'Economía', semester: 3, prereqs: [] },
-            { id: 'direccion_personas', name: 'Dirección de Personas', semester: 3, prereqs: [] },
+            { id: 'direccion_personas', name: 'Dirección de Personas', semester: 3, prereqs: ['salud_ocupacional'] },
             { id: 'intro_marketing', name: 'Introducción al Marketing', semester: 3, prereqs: ['intro_admin'] },
-            { id: 'estadistica_1', name: 'Estadística I', semester: 3, prereqs: [] },
             { id: 'ingles_2', name: 'Inglés II', semester: 3, prereqs: ['ingles_1'] },
-            { id: 'taller_equipo_2', name: 'Taller de Trabajo en Equipo II', semester: 3, prereqs: ['taller_equipo_1'] },
+            { id: 'estadistica_1', name: 'Estadísticas I', semester: 3, prereqs: ['calculo'] },
+            { id: 'economia_1', name: 'Economía I', semester: 3, prereqs: ['intro_admin'] },
+            { id: 'minor_1', name: 'Minor', semester: 3, prereqs: [] },
             { id: 'teologia_2', name: 'Teología II', semester: 3, prereqs: ['teologia_1'] },
 
             // Semestre 4
             { id: 'creacion_negocios_1', name: 'Creación de Negocios', semester: 4, prereqs: ['gestion_servicios'] },
-            { id: 'economia_2', name: 'Economía II', semester: 4, prereqs: ['economia_1'] },
-            { id: 'comportamiento_org', name: 'Comportamiento Organizacional', semester: 4, prereqs: ['direccion_personas'] },
+            { id: 'taller_equipo_2', name: 'Taller de Trabajo en Equipo II', semester: 4, prereqs: ['taller_equipo_1'] },
             { id: 'intro_gestion_op', name: 'Introducción a la Gestión de Operaciones', semester: 4, prereqs: ['gestion_servicios'] },
-            { id: 'estadistica_2', name: 'Estadística II', semester: 4, prereqs: ['estadistica_1'] },
-            { id: 'minor_1', name: 'Minor I', semester: 4, prereqs: [] },
-            { id: 'peg_electivo_1', name: 'PEG Electivo', semester: 4, prereqs: [] },
+            { id: 'estadistica_2', name: 'Estadísticas II', semester: 4, prereqs: ['estadistica_1'] },
+            { id: 'economia_2', name: 'Economía II', semester: 4, prereqs: ['economia_1'] },
+            { id: 'minor_2', name: 'Minor', semester: 4, prereqs: [] },
+            { id: 'peg_arte', name: 'PEG de Arte y Literatura', semester: 4, prereqs: [] },
 
             // Semestre 5
-            { id: 'desarrollo_org', name: 'Desarrollo Organizacional y Gestión del Cambio', semester: 5, prereqs: ['comportamiento_org'] },
-            { id: 'diseno_espacios', name: 'Diseño de Espacios', semester: 5, prereqs: ['intro_gestion_op'] },
             { id: 'gestion_op_1', name: 'Gestión de Operaciones de Servicio I', semester: 5, prereqs: ['intro_gestion_op'] },
+            { id: 'comportamiento_org', name: 'Comportamiento Organizacional', semester: 5, prereqs: ['direccion_personas'] },
             { id: 'investigacion_mercados', name: 'Investigación de Mercados', semester: 5, prereqs: ['intro_marketing', 'estadistica_1'] },
-            { id: 'comportamiento_consumidor', name: 'Comportamiento del Consumidor', semester: 5, prereqs: ['investigacion_mercados'] },
+            { id: 'diseno_espacios', name: 'Diseño de Espacios', semester: 5, prereqs: ['intro_gestion_op'] },
             { id: 'finanzas', name: 'Finanzas', semester: 5, prereqs: ['economia_2'] },
-            { id: 'minor_2', name: 'Minor II', semester: 5, prereqs: [] },
+            { id: 'minor_3', name: 'Minor', semester: 5, prereqs: [] },
             { id: 'etica', name: 'Ética', semester: 5, prereqs: [] },
 
             // Semestre 6
             { id: 'admin_estrategica', name: 'Administración Estratégica', semester: 6, prereqs: ['comportamiento_org'] },
-            { id: 'gestion_op_2', name: 'Gestión de Operaciones de Servicio II', semester: 6, prereqs: ['gestion_op_1'] },
-            { id: 'marketing_estrategico', name: 'Marketing Estratégico', semester: 6, prereqs: ['comportamiento_consumidor'] },
-            { id: 'evaluacion_proyectos', name: 'Evaluación de Proyectos', semester: 6, prereqs: ['finanzas'] },
-            { id: 'minor_3', name: 'Minor III', semester: 6, prereqs: [] },
-            { id: 'peg_electivo_2', name: 'PEG Electivo', semester: 6, prereqs: [] },
+            { id: 'gestion_op_2', name: 'Gestión de Operaciones II', semester: 6, prereqs: ['gestion_op_1'] },
+            { id: 'desarrollo_org', name: 'Desarrollo Organizacional y Gestión de Cambio', semester: 6, prereqs: ['comportamiento_org'] },
+            { id: 'comportamiento_consumidor', name: 'Comportamiento del Consumidor', semester: 6, prereqs: ['investigacion_mercados'] },
+            { id: 'optativo_1', name: 'Optativo de Servicios', semester: 6, prereqs: [] },
+            { id: 'optativo_2', name: 'Optativo de Servicios', semester: 6, prereqs: [] },
+            { id: 'peg_historia', name: 'PEG de Historia y Cultura', semester: 6, prereqs: [] },
 
             // Semestre 7
-            { id: 'diseno_experiencia', name: 'Diseño de Experiencia de Servicios', semester: 7, prereqs: ['creacion_negocios_1'] },
-            { id: 'tecnologia_servicios', name: 'Tecnología en los Servicios', semester: 7, prereqs: ['gestion_servicios'] },
-            { id: 'optativo_servicios_1', name: 'Optativo de Servicios', semester: 7, prereqs: [] },
             { id: 'innovacion_emprendimiento', name: 'Innovación y Emprendimiento', semester: 7, prereqs: ['admin_estrategica'] },
             { id: 'habilidades_directivas', name: 'Habilidades Directivas', semester: 7, prereqs: ['desarrollo_org'] },
+            { id: 'marketing_estrategico', name: 'Marketing Estratégico', semester: 7, prereqs: ['comportamiento_consumidor'] },
+            { id: 'diseno_experiencia', name: 'Diseño de Experiencia de Servicios', semester: 7, prereqs: ['creacion_negocios_1'] },
+            { id: 'tecnologia_servicios', name: 'Tecnología en los Servicios', semester: 7, prereqs: ['gestion_servicios'] },
+            { id: 'evaluacion_proyectos', name: 'Evaluación de Proyectos', semester: 7, prereqs: ['finanzas'] },
             { id: 'teologia_3', name: 'Teología III', semester: 7, prereqs: ['teologia_2'] },
-            { id: 'optativo_servicios_2', name: 'Optativo de Servicios', semester: 7, prereqs: [] },
 
             // Semestre 8
             { id: 'creacion_negocios_2', name: 'Creación de Negocios II', semester: 8, prereqs: ['diseno_experiencia'] },
             { id: 'derecho_laboral', name: 'Derecho Laboral', semester: 8, prereqs: ['habilidades_directivas'] },
             { id: 'etica_profesional', name: 'Ética Profesional', semester: 8, prereqs: ['etica'] },
             { id: 'admin_instalaciones', name: 'Administración de Instalaciones', semester: 8, prereqs: ['gestion_op_2'] },
-            { id: 'optativo_servicios_3', name: 'Optativo de Servicios', semester: 8, prereqs: [] },
-            { id: 'optativo_servicios_4', name: 'Optativo de Servicios', semester: 8, prereqs: [] },
-            { id: 'peg_electivo_3', name: 'PEG Electivo', semester: 8, prereqs: [] },
+            { id: 'optativo_3', name: 'Optativo de Servicios', semester: 8, prereqs: [] },
+            { id: 'optativo_4', name: 'Optativo de Servicios', semester: 8, prereqs: [] },
+            { id: 'peg_ciencias', name: 'PEG de Ciencias', semester: 8, prereqs: [] },
 
             // Semestre 9
             { id: 'practica_profesional', name: 'Práctica Profesional', semester: 9, prereqs: ['creacion_negocios_2'] },
