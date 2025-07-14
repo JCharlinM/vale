@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malla Curricular Interactiva - Administración de Servicios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .semester-column {
+            min-width: 200px;
+        }
+        .course-card {
+            transition: all 0.3s ease;
+            border-left-width: 4px;
+        }
+        .course-locked {
+            background-color: #e2e8f0;
+            border-color: #a0aec0;
+            color: #a0aec0;
+            cursor: not-allowed;
+        }
+        .course-unlocked {
+            background-color: #ffffff;
+            border-color: #4299e1;
+            cursor: pointer;
+        }
+        .course-completed {
+            background-color: #c6f6d5;
+            border-color: #38a169;
+        }
+        .course-card input[type="checkbox"] {
+            cursor: pointer;
+        }
+        .course-locked input[type="checkbox"] {
+            cursor: not-allowed;
+        }
+        .progress-bar-bg {
+            background-color: #e2e8f0;
+        }
+        .progress-bar-fill {
+            background-color: #48bb78;
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Malla Curricular Interactiva</h1>
+            <p class="text-lg text-gray-600 mt-2">Administración de Servicios</p>
+        </header>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-xl font-semibold mb-3 text-gray-700">Progreso Total</h2>
+            <div class="progress-bar-bg w-full rounded-full h-6">
+                <div id="progressBar" class="progress-bar-fill h-6 rounded-full flex items-center justify-center text-white font-bold" style="width: 0%;">
+                    <span id="progressText">0%</span>
+                </div>
+            </div>
+            <div class="text-right mt-2">
+                 <button id="resetButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                    <i class="fas fa-undo mr-2"></i>Reiniciar Progreso
+                </button>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto pb-4">
+            <div id="curriculum-grid" class="flex space-x-4">
+                <!-- Las columnas de los semestres se generarán aquí -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Definición de las asignaturas con sus IDs, nombres, semestres y prerrequisitos.
+        const courses = [
+            // Semestre 1
+            { id: 'intro_servicios', name: 'Introducción a los Servicios', semester: 1, prereqs: [] },
+            { id: 'intro_admin', name: 'Introducción a la Administración', semester: 1, prereqs: [] },
+            { id: 'contabilidad', name: 'Contabilidad', semester: 1, prereqs: [] },
+            { id: 'algebra', name: 'Álgebra', semester: 1, prereqs: [] },
+            { id: 'taller_equipo_1', name: 'Taller de Trabajo en Equipo I', semester: 1, prereqs: [] },
+            { id: 'taller_comunicacion', name: 'Taller de Comunicación', semester: 1, prereqs: [] },
+            { id: 'antropologia', name: 'Antropología', semester: 1, prereqs: [] },
+
+            // Semestre 2
+            { id: 'gestion_servicios', name: 'Gestión de Servicios', semester: 2, prereqs: ['intro_servicios'] },
+            { id: 'salud_ocupacional', name: 'Salud Ocupacional', semester: 2, prereqs: ['intro_admin'] },
+            { id: 'contabilidad_costos', name: 'Contabilidad de Costos', semester: 2, prereqs: ['contabilidad'] },
+            { id: 'calculo', name: 'Cálculo', semester: 2, prereqs: ['algebra'] },
+            { id: 'ingles_1', name: 'Inglés', semester: 2, prereqs: [] },
+            { id: 'taller_herramientas', name: 'Taller de Herramientas Informáticas', semester: 2, prereqs: [] },
+            { id: 'teologia_1', name: 'Teología I', semester: 2, prereqs: [] },
+
+            // Semestre 3
+            { id: 'economia_1', name: 'Economía', semester: 3, prereqs: ['intro_admin'] },
+            { id: 'direccion_personas', name: 'Dirección de Personas', semester: 3, prereqs: ['salud_ocupacional'] },
+            { id: 'intro_marketing', name: 'Introducción al Marketing', semester: 3, prereqs: ['intro_admin'] },
+            { id: 'estadistica_1', name: 'Estadística I', semester: 3, prereqs: ['calculo'] },
+            { id: 'ingles_2', name: 'Inglés II', semester: 3, prereqs: ['ingles_1'] },
+            { id: 'taller_equipo_2', name: 'Taller de Trabajo en Equipo II', semester: 3, prereqs: ['taller_equipo_1'] },
+            { id: 'teologia_2', name: 'Teología II', semester: 3, prereqs: ['teologia_1'] },
+
+            // Semestre 4
+            { id: 'creacion_negocios_1', name: 'Creación de Negocios', semester: 4, prereqs: ['gestion_servicios'] },
+            { id: 'economia_2', name: 'Economía II', semester: 4, prereqs: ['economia_1'] },
+            { id: 'comportamiento_org', name: 'Comportamiento Organizacional', semester: 4, prereqs: ['direccion_personas'] },
+            { id: 'intro_gestion_op', name: 'Introducción a la Gestión de Operaciones', semester: 4, prereqs: ['gestion_servicios'] },
+            { id: 'estadistica_2', name: 'Estadística II', semester: 4, prereqs: ['estadistica_1'] },
+            { id: 'minor_1', name: 'Minor I', semester: 4, prereqs: [] },
+            { id: 'peg_electivo_1', name: 'PEG Electivo', semester: 4, prereqs: [] },
+
+            // Semestre 5
+            { id: 'desarrollo_org', name: 'Desarrollo Organizacional y Gestión del Cambio', semester: 5, prereqs: ['comportamiento_org'] },
+            { id: 'diseno_espacios', name: 'Diseño de Espacios', semester: 5, prereqs: ['intro_gestion_op'] },
+            { id: 'gestion_op_1', name: 'Gestión de Operaciones de Servicio I', semester: 5, prereqs: ['intro_gestion_op'] },
+            { id: 'investigacion_mercados', name: 'Investigación de Mercados', semester: 5, prereqs: ['intro_marketing', 'estadistica_1'] },
+            { id: 'comportamiento_consumidor', name: 'Comportamiento del Consumidor', semester: 5, prereqs: ['investigacion_mercados'] },
+            { id: 'finanzas', name: 'Finanzas', semester: 5, prereqs: ['economia_2'] },
+            { id: 'minor_2', name: 'Minor II', semester: 5, prereqs: [] },
+            { id: 'etica', name: 'Ética', semester: 5, prereqs: [] },
+
+            // Semestre 6
+            { id: 'admin_estrategica', name: 'Administración Estratégica', semester: 6, prereqs: ['comportamiento_org'] },
+            { id: 'gestion_op_2', name: 'Gestión de Operaciones de Servicio II', semester: 6, prereqs: ['gestion_op_1'] },
+            { id: 'marketing_estrategico', name: 'Marketing Estratégico', semester: 6, prereqs: ['comportamiento_consumidor'] },
+            { id: 'evaluacion_proyectos', name: 'Evaluación de Proyectos', semester: 6, prereqs: ['finanzas'] },
+            { id: 'minor_3', name: 'Minor III', semester: 6, prereqs: [] },
+            { id: 'peg_electivo_2', name: 'PEG Electivo', semester: 6, prereqs: [] },
+
+            // Semestre 7
+            { id: 'diseno_experiencia', name: 'Diseño de Experiencia de Servicios', semester: 7, prereqs: ['creacion_negocios_1'] },
+            { id: 'tecnologia_servicios', name: 'Tecnología en los Servicios', semester: 7, prereqs: ['gestion_servicios'] },
+            { id: 'optativo_servicios_1', name: 'Optativo de Servicios', semester: 7, prereqs: [] },
+            { id: 'innovacion_emprendimiento', name: 'Innovación y Emprendimiento', semester: 7, prereqs: ['admin_estrategica'] },
+            { id: 'habilidades_directivas', name: 'Habilidades Directivas', semester: 7, prereqs: ['desarrollo_org'] },
+            { id: 'teologia_3', name: 'Teología III', semester: 7, prereqs: ['teologia_2'] },
+            { id: 'optativo_servicios_2', name: 'Optativo de Servicios', semester: 7, prereqs: [] },
+
+            // Semestre 8
+            { id: 'creacion_negocios_2', name: 'Creación de Negocios II', semester: 8, prereqs: ['diseno_experiencia'] },
+            { id: 'derecho_laboral', name: 'Derecho Laboral', semester: 8, prereqs: ['habilidades_directivas'] },
+            { id: 'etica_profesional', name: 'Ética Profesional', semester: 8, prereqs: ['etica'] },
+            { id: 'admin_instalaciones', name: 'Administración de Instalaciones', semester: 8, prereqs: ['gestion_op_2'] },
+            { id: 'optativo_servicios_3', name: 'Optativo de Servicios', semester: 8, prereqs: [] },
+            { id: 'optativo_servicios_4', name: 'Optativo de Servicios', semester: 8, prereqs: [] },
+            { id: 'peg_electivo_3', name: 'PEG Electivo', semester: 8, prereqs: [] },
+
+            // Semestre 9
+            { id: 'practica_profesional', name: 'Práctica Profesional', semester: 9, prereqs: ['creacion_negocios_2'] },
+        ];
+
+        let completedCourses = new Set();
+
+        const curriculumGrid = document.getElementById('curriculum-grid');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const resetButton = document.getElementById('resetButton');
+
+        // Función para verificar si una asignatura puede ser desbloqueada
+        function canUnlock(course) {
+            if (course.prereqs.length === 0) return true;
+            return course.prereqs.every(prereqId => completedCourses.has(prereqId));
+        }
+
+        // Función para renderizar (o re-renderizar) todas las asignaturas
+        function renderCourses() {
+            curriculumGrid.innerHTML = '';
+            const totalSemesters = Math.max(...courses.map(c => c.semester));
+
+            for (let i = 1; i <= totalSemesters; i++) {
+                const semesterColumn = document.createElement('div');
+                semesterColumn.className = 'semester-column flex-shrink-0';
+                semesterColumn.innerHTML = `<h3 class="text-lg font-semibold text-center mb-4 text-gray-700">Semestre ${i}</h3>`;
+                const coursesContainer = document.createElement('div');
+                coursesContainer.className = 'space-y-3';
+                
+                const semesterCourses = courses.filter(c => c.semester === i);
+                
+                semesterCourses.forEach(course => {
+                    const isCompleted = completedCourses.has(course.id);
+                    const isUnlocked = !isCompleted && canUnlock(course);
+                    const isLocked = !isCompleted && !isUnlocked;
+
+                    const card = document.createElement('div');
+                    card.className = 'course-card p-3 rounded-lg shadow-sm flex items-center justify-between';
+                    
+                    let cardClass = '';
+                    if (isCompleted) cardClass = 'course-completed';
+                    else if (isUnlocked) cardClass = 'course-unlocked';
+                    else cardClass = 'course-locked';
+                    card.classList.add(cardClass);
+                    
+                    card.innerHTML = `
+                        <label for="${course.id}" class="flex-grow ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}">
+                            <span class="font-medium text-sm">${course.name}</span>
+                        </label>
+                        <input type="checkbox" id="${course.id}" class="ml-4 h-5 w-5 rounded text-blue-500 focus:ring-blue-400 border-gray-300" 
+                            ${isCompleted ? 'checked' : ''} 
+                            ${isLocked ? 'disabled' : ''}>
+                    `;
+
+                    // Añadir evento al checkbox
+                    card.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            completedCourses.add(course.id);
+                        } else {
+                            // Al desmarcar, también se deben bloquear las asignaturas dependientes que no tengan sus prerrequisitos
+                            uncompleteCourseAndDependents(course.id);
+                        }
+                        saveProgress();
+                        renderAll();
+                    });
+
+                    coursesContainer.appendChild(card);
+                });
+                semesterColumn.appendChild(coursesContainer);
+                curriculumGrid.appendChild(semesterColumn);
+            }
+        }
+
+        function uncompleteCourseAndDependents(courseId) {
+            completedCourses.delete(courseId);
+            
+            // Buscar todas las asignaturas que tienen esta como prerrequisito
+            const dependentCourses = courses.filter(c => c.prereqs.includes(courseId));
+
+            dependentCourses.forEach(depCourse => {
+                if (completedCourses.has(depCourse.id)) {
+                    uncompleteCourseAndDependents(depCourse.id);
+                }
+            });
+        }
+
+        // Función para actualizar la barra de progreso
+        function updateProgress() {
+            const total = courses.length;
+            const completedCount = completedCourses.size;
+            const percentage = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+            
+            progressBar.style.width = `${percentage}%`;
+            progressText.textContent = `${percentage}%`;
+        }
+        
+        // Función para guardar el progreso en localStorage
+        function saveProgress() {
+            localStorage.setItem('completedCourses', JSON.stringify(Array.from(completedCourses)));
+        }
+
+        // Función para cargar el progreso desde localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('completedCourses');
+            if (saved) {
+                completedCourses = new Set(JSON.parse(saved));
+            }
+        }
+
+        // Función para reiniciar el progreso
+        function resetProgress() {
+            if (confirm('¿Estás seguro de que quieres reiniciar todo tu progreso? Esta acción no se puede deshacer.')) {
+                completedCourses.clear();
+                saveProgress();
+                renderAll();
+            }
+        }
+
+        // Función principal para renderizar todo
+        function renderAll() {
+            renderCourses();
+            updateProgress();
+        }
+        
+        // Event listener para el botón de reinicio
+        resetButton.addEventListener('click', resetProgress);
+
+        // Carga inicial
+        loadProgress();
+        renderAll();
+
+    </script>
+</body>
+</html>
